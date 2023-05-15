@@ -1,0 +1,25 @@
+
+Idents(YDL)<-YDL$celltype
+
+YDL_counts <- as.matrix(YDL@assays$RNA@data)
+YDL_counts <- data.frame(Gene=toupper(rownames(YDL_counts)), YDL_counts,check.names=FALSE)
+YDL_meta <- data.frame(Cell=rownames(YDL@meta.data), cell_type=YDL@meta.data$celltype)
+#YDL_meta <- data.frame(Cell=rownames(YDL@meta.data), cell_type=YDL@meta.data$seurat_clusters)
+write.table(YDL_counts, "test_counts.txt", row.names=F, sep='\t')#如果是人类数据直接读出文件
+write.table(YDL_meta, "test_meta.txt", row.names=F, sep='\t', quote=F)
+head(YDL_meta)
+head(YDL_counts[1:4,1:4])
+head(YDL_counts[1:4,])
+
+
+
+
+
+
+#conda create -n cpdb python=3.7
+conda activate cpdb
+#pip install cellphonedb
+cellphonedb method statistical_analysis test_meta.txt test_counts.txt --threads 40 --counts-data=gene_name
+
+cellphonedb plot dot_plot
+cellphonedb plot heatmap_plot test_meta.txt
