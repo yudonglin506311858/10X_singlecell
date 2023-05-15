@@ -154,3 +154,57 @@ ggplot(cell.prop,aes(sample,proportion,fill=cluster))+
 #https://www.jianshu.com/p/56c1dcf3d9aa
 
 
+
+
+
+set.seed(123)
+
+#remotes::install_github('chris-mcginnis-ucsf/DoubletFinder')
+
+library(DoubletFinder)
+
+library(Seurat)
+
+library(dplyr)
+
+library(Matrix)
+
+library(methods)
+
+library(RColorBrewer)
+
+YDL#读入处理好的seurat对象
+sweep.res.list <- paramSweep_v3(YDL, PCs = 1:20, sct = FALSE)
+head(sweep.res.list)
+sweep.stats <- summarizeSweep(sweep.res.list, GT = FALSE)
+head(sweep.res.list)
+bcmvn <- find.pK(sweep.stats)
+
+annotations <- YDL@meta.data$seurat_clusters
+
+## Homotypic Doublet Proportion Estimate -------------------------------------------------------------------------------------
+
+homotypic.prop <- modelHomotypic(annotations)           ## ex: annotations <- YDL@meta.data$ClusteringResults
+
+nExp_poi <- round(0.075*nrow(YDL@meta.data))  ## Assuming 7.5% doublet formation rate - tailor for your dataset
+
+nExp_poi.adj <- round(nExp_poi*(1-homotypic.prop))
+
+
+
+## Run DoubletFinder with varying classification stringencies ----------------------------------------------------------------
+
+YDL <- doubletFinder_v3(YDL, PCs = 1:20, pN = 0.25, pK = 0.09, nExp = nExp_poi, reuse.pANN = FALSE, sct = FALSE)
+
+head(YDL@meta.data)
+YDL <- doubletFinder_v3(YDL, PCs = 1:20, pN = 0.25, pK = 0.09, nExp = nExp_poi.adj, reuse.pANN = "pANN_0.25_0.09_284", sct = FALSE)
+DimPlot(YDL,reduction = "tsne",label = TRUE,pt.size = 1.5)
+DimPlot(YDL,reduction = "tsne",label = TRUE,pt.size = 1.5,group.by = "orig.ident")    #TSNE可视化
+YDL_NEW <- subset(YDL, cells= rownames(YDL@meta.data[YDL@meta.data$DF.classifications_0.25_0.09_284=="Singlet",]))
+DimPlot(YDL_NEW,reduction = "tsne",label = TRUE,pt.size = 1.5,group.by = "orig.ident")
+DimPlot(YDL_NEW,reduction = "tsne",label = TRUE,pt.size = 1.5)
+
+YDL_NEW_1 <- subset(YDL, cells= rownames(YDL@meta.data[YDL@meta.data$DF.classifications_0.25_0.09_284=="Doublet",]))
+DimPlot(YDL_NEW_1,reduction = "tsne",label = TRUE,pt.size = 1.5,group.by = "orig.ident")
+DimPlot(YDL_NEW_1,reduction = "tsne",label = TRUE,pt.size = 1.5)
+DimPlot(YDL,reduction = "tsne",label = TRUE,pt.size = 1.5,group.by="DF.classifications_0.25_0.09_284")
