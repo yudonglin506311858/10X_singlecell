@@ -80,3 +80,37 @@ dev.off()
 saveRDS(cds,"cds_SINGLET.rds")
 
 
+
+
+
+#devtools::install_github('cole-trapnell-lab/monocle3')
+library(monocle3)
+library(Seurat)
+library(SeuratWrappers)
+library(ggplot2)
+library(patchwork)
+library(magrittr)
+
+YDL<-readRDS("cell_matastasis.RDS")
+DimPlot(YDL, reduction = "umap",pt.size = 1.5,label = T)
+###Pseudotime monocle3
+cds <- as.cell_data_set(YDL)
+cds <- cluster_cells(cds)
+#head(pData(cds))
+plot_cells(cds, color_cells_by = "partition", show_trajectory_graph = FALSE)
+plot_cells(cds, color_cells_by = "seurat_clusters", show_trajectory_graph = FALSE)
+cds <- learn_graph(cds)
+plot_cells(cds, label_groups_by_cluster = FALSE, label_leaves = FALSE, label_branch_points = FALSE)
+
+
+stem1<-rownames(pData(cds)[which(pData(cds)$ident %in% c('B cells')),])
+cds <- order_cells(cds, root_cells = stem1)
+plot_cells(cds, color_cells_by = "pseudotime", label_cell_groups = FALSE, label_leaves = FALSE, 
+           label_branch_points = FALSE)
+
+stem2<-rownames(pData(cds)[which(pData(cds)$ident %in% c('fibroblasts')),])
+cds <- order_cells(cds, root_cells = stem2)
+plot_cells(cds, color_cells_by = "pseudotime", label_cell_groups = FALSE, label_leaves = FALSE, 
+           label_branch_points = FALSE)
+
+
