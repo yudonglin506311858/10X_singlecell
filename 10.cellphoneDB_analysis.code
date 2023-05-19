@@ -12,10 +12,6 @@ head(YDL_counts[1:4,1:4])
 head(YDL_counts[1:4,])
 
 
-
-
-
-
 #conda create -n cpdb python=3.7
 conda activate cpdb
 #pip install cellphonedb
