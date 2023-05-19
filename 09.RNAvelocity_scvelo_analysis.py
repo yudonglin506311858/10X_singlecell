@@ -159,3 +159,18 @@ scv.pl.velocity_embedding_stream(adata, basis='umap', color='seurat_clusters', f
 scv.pl.velocity_embedding_stream(adata, basis='tsne', color='seurat_clusters', figsize =(10, 10),save='embedding_stream_tsne1.pdf', title='')
 
 
+
+scv.pl.velocity_embedding_grid(adata, basis='umap', color='celltype', save='embedding_grid_umap_celltype.pdf', title='', scale=0.25)
+
+scv.pl.velocity_embedding_grid(adata, basis='tsne', color='celltype', save='embedding_grid_tsne_celltype.pdf', title='', scale=0.25)
+
+
+scv.pl.velocity_embedding_stream(adata, basis='umap', color='celltype', save='embedding_stream_umap_celltype.pdf', title='')
+scv.pl.velocity_embedding_stream(adata, basis='tsne', color='celltype', save='embedding_stream_tsne_celltype.pdf', title='')
+
+#可以调节长宽比，不过最后只能输出图片，而不能是PDF
+scv.pl.velocity_embedding_stream(adata, basis='umap', color='celltype', figsize =(10, 10),save='embedding_stream_umap1——celltype.pdf', title='')
+scv.pl.velocity_embedding_stream(adata, basis='tsne', color='celltype', figsize =(10, 10),save='embedding_stream_tsne1——celltype.pdf', title='')
+
+
+
