@@ -12,11 +12,8 @@ library(plyr)
 library(permute)
 library(data.table)
 library(SCopeLoomR)
-
-#setwd("D:/lilab-学习/博士课程/本部-博士课程/任仙文文章/10X文章")
 setwd("/data3/yudonglin/ren/10X")
 #批量读取10X单细胞转录组数据文件夹：
-
 folders=list.files('./',pattern='[ar]$')
 folders
 library(Seurat)
@@ -24,7 +21,6 @@ sceList = lapply(folders,function(folder){
   CreateSeuratObject(counts = Read10X(folder), 
                      project = folder )
 })
-
 YDL <- merge(sceList[[1]], 
              y = c(sceList[[2]],sceList[[3]],sceList[[4]]), 
              add.cell.ids = folders, 
